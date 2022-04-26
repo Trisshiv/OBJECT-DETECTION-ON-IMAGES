@@ -1,0 +1,105 @@
+<html>
+
+<head>
+
+    <title>Object Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+
+    <style>
+        body {
+            background-position: center;
+            background-size: cover;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        #b_status {
+            font-size: 17px;
+        }
+
+        canvas {
+            border: solid rgba(100, 100, 100, 0.26);
+            border-radius: 10px;
+        }
+
+        #bung {
+            background-color: black !important;
+            color: white;
+            margin-left: 1400px;
+        }
+    </style>
+</head>
+
+<body background="b2.webp">
+    <center>
+        <h2>Object Detection From WhitehatJr</h2>
+        <h3 class="btn btn-dark" id="bung" onclick="backub()">Back</h3>
+        <br>
+        <h3 class="btn btn-danger" id="b_status">Status</h3>
+
+        <br>
+        <h3 class="btn btn-success" id="b_ded"></h3>
+    </center>
+
+    <script>
+        resulobject = [];
+
+        function preload() {
+            bot = loadImage("bottles.png");
+        }
+
+        function setup() {
+            canvas = createCanvas(500, 380);
+            canvas.position(530, 250);
+
+            objectDetector = ml5.objectDetector('cocossd', modelLoaded);
+            document.getElementById("b_status").innerHTML = "Status : Detecting Objects";
+        }
+
+        function draw() {
+            image(bot, 0, 0, 500, 380);
+
+            objectDetector.detect(bot, gotResult);
+
+            for (i = 0; i < resulobject.length; i++) {
+                document.getElementById("b_status").innerHTML = "Status : Objects have been detected";
+                document.getElementById("b_ded").innerHTML = "The COCOSSD model has detected " + resulobject.length + " objects from the image";
+
+                fill("red");
+                percentage = floor(resulobject[i].confidence * 100)
+                text(resulobject[i].label + " " + percentage + "%", resulobject[i].x, resulobject[i].y);
+                noFill();
+                stroke("red");
+                rect(resulobject[i].x, resulobject[i].y, resulobject[i].width, resulobject[i].height);
+            }
+        }
+
+        function modelLoaded() {
+            console.log("model is Loaded!")
+        }
+
+        function gotResult(error, result) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log(result);
+                resulobject = result;
+            }
+        }
+
+        function backub() {
+            window.location = "index.html";
+        }
+    </script>
+</body>
+
+</html>
